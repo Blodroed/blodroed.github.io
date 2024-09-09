@@ -1,0 +1,12 @@
+---
+import { SEO } from "astro-seo";
+const { title, seoTitle, seoDesc } = Astro.props;
+---
+
+<head>
+    <SEO title={seoTitle} description={seoDesc} />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <link href="https://fonts.cdnfonts.com/css/cascadia-code" rel="stylesheet">
+</head>

@@ -1,0 +1,28 @@
+---
+import MainHead from './MainHead.astro';
+import Nav from '../components/nav.astro';
+import Footer from '../components/Footer.astro';
+
+const { title, seoDesc, seoTitle } = Astro.props;
+---
+
+<html>
+    <MainHead title={title} seoTitle={seoTitle} seoDesc={seoDesc}/>
+    <body class="bg-slate-950 text-white flex flex-col min-h-screen">
+        <div class="container mx-auto my-2 border border-slate-700 border-opacity-70 bg-slate-900 rounded-lg flex flex-col flex-grow">
+            <Nav />
+            <div class="flex-grow">
+                <slot />
+            </div>
+            <Footer />
+        </div>
+        <style>
+            body {
+                font-family: 'Cascadia Code';
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+            }
+        </style>
+    </body>
+</html>
