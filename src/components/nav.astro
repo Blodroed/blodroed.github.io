@@ -2,7 +2,7 @@
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 ---
 
-<header class="md:flex p-5 gap-5 mb-5">
+<header class="md:flex p-5 gap-5 mb-5 custom-border relative">
     <Astronav>
         <div class="flex w-full justify-between">
             <a href="/">Blodroed's portfolio</a>
@@ -18,3 +18,17 @@ import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
         </MenuItems>
     </Astronav>
 </header>
+
+<style>
+    .custom-border::after {
+        content: "";
+        display: block;
+        width: 95%;
+        margin: 0 auto;
+        border-bottom: 2px solid rgba(71, 85, 105, 0.5);
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
