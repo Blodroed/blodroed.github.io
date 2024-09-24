@@ -1,0 +1,8 @@
+---
+const { title, description, link } = Astro.props;
+---
+
+<a href={link} class="block p-4 border border-slate-500 rounded-lg hover:bg-blue-600 hover:bg-opacity-70 duration-300">
+    <h2 class="text-lg font-bold mb-2 text-center">{title}</h2>
+    <p class="text-sm">{description}</p>
+</a>

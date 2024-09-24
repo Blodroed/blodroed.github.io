@@ -1,6 +1,6 @@
 ---
 import MainMenuLayout from "../layouts/MainMenuLayout.astro";
-import { Image } from 'astro:assets';
+import InfoCard from "../components/infoCard.astro";
 ---
 
 <MainMenuLayout title="Blodroed Portfolio" 
@@ -20,22 +20,9 @@ import { Image } from 'astro:assets';
 		</h1>
 	</div>
 
-	<div id="card-box" class="w-8/12 mx-auto mb-5">
-		<p class="text-sm text-center lg:text-left whitespace-pre-line">SHREK
-			Once upon a time there was a lovely 
-			princess. But she had an enchantment 
-			upon her of a fearful sort which could 
-			only be broken by love's first kiss. 
-			She was locked away in a castle guarded 
-			by a terrible fire-breathing dragon. 
-			Many brave knights had attempted to 
-			free her from this dreadful prison, 
-			but non prevailed. She waited in the 
-			dragon's keep in the highest room of 
-			the tallest tower for her true love 
-			and true love's first kiss. (laughs) 
-			Like that's ever gonna happen. What 
-			a load of - (toilet flush)
-		</p>
+	<div id="card-box" class="w-8/12 mx-auto mb-5 grid sm:grid-cols-1 md:grid-cols-3 gap-4">
+		<InfoCard title="About Me" description="Learn more about my background, skills, and interests." link="/about" />
+		<InfoCard title="Projects" description="Here you can see all the projects i have worked on and is currently working on" link="/projects" />
+		<InfoCard title="Contact" description="Get in touch with me for collaborations or inquiries." link="/contact" />
 	</div>
 </MainMenuLayout>
