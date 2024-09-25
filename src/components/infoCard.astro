@@ -1,0 +1,38 @@
+---
+const { title, description, link, imageSrc, icon } = Astro.props;
+---
+
+<a href={link} class="card">
+    {imageSrc && <img src={imageSrc} alt={title} class="card-image" />}
+    <div class="card-content">
+        {icon && <i class={`fas fa-${icon} card-icon`}></i>}
+        <h2 class="card-title">{title}</h2>
+    </div>
+    <p class="card-description">{description}</p>
+</a>
+
+<style>
+.card {
+    @apply block p-4 rounded-lg bg-gradient-to-br from-blue-600 to-purple-700 hover:from-blue-500 hover:to-purple-600 hover:bg-opacity-70 duration-300;
+}
+
+.card-image {
+    @apply w-full h-32 object-cover rounded-t-lg mb-4;
+}
+
+.card-content {
+    @apply flex items-center mb-2;
+}
+
+.card-icon {
+    @apply text-2xl mb-2;
+}
+
+.card-title {
+    @apply flex-1 text-lg font-bold text-center text-slate-100;
+}
+
+.card-description {
+    @apply text-sm text-slate-300;
+}
+</style>

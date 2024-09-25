@@ -1,0 +1,38 @@
+---
+import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
+---
+
+<header class="md:flex p-5 gap-5 mb-5 custom-border relative">
+    <Astronav>
+        <div class="flex w-full justify-between">
+            <a href="/" class="glow-on-hover">Blodroed's portfolio</a>
+            <div class="block md:hidden"><MenuIcon class="w-4 h-4 text-white"/></div>
+        </div>
+        <MenuItems class="hidden md:flex">
+            <ul class="flex flex-col md:flex-row md:gap-5">
+                <li><a href="/" class="glow-on-hover">Home</a></li>
+                <li><a href="/about" class="glow-on-hover">About</a></li>
+                <li><a href="/projects" class="glow-on-hover">Projects</a></li>
+                <li><a href="/contact" class="glow-on-hover">Contact</a></li>
+            </ul>
+        </MenuItems>
+    </Astronav>
+</header>
+
+<style>
+    .custom-border::after {
+        content: "";
+        display: block;
+        width: 95%;
+        margin: 0 auto;
+        border-bottom: 2px solid rgba(71, 85, 105, 0.5);
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .glow-on-hover:hover {
+        @apply text-white;
+        text-shadow: 0 0 10px rgba(196, 4, 255, 0.8), 0 0 20px rgba(196, 4, 255, 0.6), 0 0 30px rgba(196, 4, 255, 0.4);
+    }
+</style>
