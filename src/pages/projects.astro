@@ -1,7 +1,42 @@
 ---
 import MainMenuLayout from "../layouts/MainMenuLayout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+
+const response = await fetch('https://api.github.com/users/blodroed/repos')
+const projects = await response.json();
+
+// Sort projects by last edited date (pushed_at)
+projects.sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime());
 ---
 
 <MainMenuLayout>
-    <p class="ml-5">Still a work in progress, come back later...</p>
+    <!-- Jump to sections bar -->
+
+    <!-- Main Projects -->    
+    <div class="container mx-auto w-8/12" id="main-projects">
+        <h1 class="text-2xl md:text-6xl text-center">My proudest achievements:</h1>
+        <h2 class="text-blue-600 text-3xl text-center">Betalan of course!!</h2>
+    </div>
+
+    <!-- Container for the project cards -->
+    <div class="container flex justify-center items-center min-h-screen">
+        <div class="w-full max-w-7xl" id="repo-grid">
+            <h2 class="ml-5 text-2xl">My github repos:</h2>
+            <div class="projects-grid">
+                {projects.map(project => (
+                    <ProjectCard project={project} />
+                ))}
+            </div>
+        </div>
+    </div>
 </MainMenuLayout>
+
+<style>
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        align-content: center;
+    }
+</style>
