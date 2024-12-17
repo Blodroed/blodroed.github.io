@@ -2,6 +2,135 @@
 import MainMenuLayout from "../layouts/MainMenuLayout.astro";
 ---
 
+<style>
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+    text-align: center;
+    flex-direction: column; /* Stack items vertically */
+  }
+  .contact-item {
+    text-align: center;
+    margin: 0 10px;
+    position: relative;
+    font-weight: bolder;
+  }
+  .title-container {
+    max-width: fit-content;
+    margin: 0 auto;
+  }
+
+  .contact-info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .contact-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row; /* Align items horizontally */
+    gap: 0.75em;
+    font-weight: bolder;
+    border: 2px solid rgba(75, 30, 133, 0.5);
+    border-radius: 1.5em;
+    background: linear-gradient(to bottom right, rgba(75, 30, 133, 1), rgba(75, 30, 133, 0.01));
+    color: white;
+    padding: 1em;
+    backdrop-blur: 12px;
+  }
+
+  /* From Uiverse.io by mahiatlinux */
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .contact-item {
+    margin: 0 10px;
+    position: relative;
+    font-weight: bolder; /* Made bolder */
+  }
+
+  .contact-item .link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto; /* Remove fixed size */
+    height: auto; /* Remove fixed size */
+    color: #fff; /* White icons */
+    transition: all 0.3s ease-in-out;
+    font-weight: bolder; /* Made bolder */
+    font-size: 4.5em;
+  }
+
+  .contact-item .link:hover {
+    box-shadow: none; /* Remove shadow */
+  }
+
+  .contact-item .link[data-social="github"]:hover {
+    color: slateblue;
+  }
+
+  .contact-item .link[data-social="linkedin"]:hover {
+    color: #0077b5;
+  }
+
+  .contact-item .link[data-social="email"]:hover {
+    color: #d44638;
+  }
+
+  .contact-item .link[data-social="spotify"]:hover {
+    color: #1db954;
+  }
+
+  .contact-item .link[data-social="pinterest"]:hover {
+    color: #bd081c;
+  }
+
+  .contact-item .link[data-social="dribbble"]:hover {
+    color: #ea4c89;
+  }
+
+  .contact-item .link[data-social="telegram"]:hover {
+    color: #0088cc;
+  }
+</style>
+
 <MainMenuLayout>
-    <p class="ml-5">Still a work in progress, come back later...</p>
+  <div class="main-container">
+    <div>
+      <div class="title-container">
+        <h2 style="text-shadow: 0px 0px 40px rgba(96, 165, 250, 0.35);" class="text-4xl md:text-5xl lg:text-6xl text-blue-400 font-bold">Contact me on:</h2>
+      </div>
+
+      <div class="contact-info-container">
+        <ul class="contact-info">
+          <li class="contact-item">
+            <a href="https://github.com/Blodroed" aria-label="GitHub" data-social="github" class="link">
+              <i class="fab fa-github icon"></i>
+            </a>
+          </li>
+          <li class="contact-item">
+            <a href="https://www.linkedin.com/in/albert-salvesen-oroe" aria-label="LinkedIn" data-social="linkedin" class="link">
+              <i class="fab fa-linkedin icon"></i>
+            </a>
+          </li>
+          <li class="contact-item">
+            <a href="mailto:alberts-o@outlook.com" aria-label="Email" data-social="email" class="link">
+              <i class="fas fa-envelope icon"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </MainMenuLayout>
