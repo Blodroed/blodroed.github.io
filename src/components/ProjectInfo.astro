@@ -1,4 +1,158 @@
 ---
-const {title, description, link, imageSrc, icon} = Astro.props;
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface ProjectInfoProps {
+    title: string;
+    description: string;
+    link: string;
+    imageSrc?: string;
+    icon?: string;
+    order: number;
+    technologies?: string[];
+}
+
+const { title, description, link, imageSrc, icon, order, technologies } = Astro.props;
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*.{jpeg,jpg,png,gif}');
+
+let image;
+if (imageSrc) {
+    const imageKey = `/src/assets/${imageSrc}`;
+    if (images[imageKey]) {
+        image = (await images[imageKey]()).default;
+    } else {
+        console.error(`"${imageSrc}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
+    }
+}
+
+// Check if the order is even
+const isEven = order % 2 === 0;
 ---
 
+<div class={`project-info ${isEven ? 'image-left' : 'image-right'} horizontal-line`}>
+    {imageSrc && <Image src={image} alt={title} class="project-image" loading="eager"/>}
+    <div class="project-content">
+        {icon && <i class={`fas fa-${icon} project-icon`}></i>}
+        <h2 class="project-title">{title}</h2>
+        <p class="project-description">{description}</p>
+        {technologies && (
+            <div class="project-technologies">
+                {technologies.slice(0, 3).map(tech => (
+                    <span class="language">{tech}</span>
+                ))}
+                <span id="more-technologies" style="display: none;">
+                    {technologies.slice(3).map(tech => (
+                        <span class="language">{tech}</span>
+                    ))}
+                </span>
+                {technologies.length > 3 && (
+                    <button class="show-more" onclick="toggleShowMore()">
+                        Show More
+                    </button>
+                )}
+            </div>
+        )}
+        <a href={link} class="project-link">Learn more</a>
+    </div>
+</div>
+
+<script client:load>
+function toggleShowMore() {
+    const moreTechnologies = document.getElementById('more-technologies');
+    const showMoreButton = document.querySelector('.show-more');
+    if (moreTechnologies.style.display === 'none') {
+        moreTechnologies.style.display = 'inline';
+        showMoreButton.textContent = 'Show Less';
+    } else {
+        moreTechnologies.style.display = 'none';
+        showMoreButton.textContent = 'Show More';
+    }
+}
+</script>
+
+<style>
+.project-info {
+    @apply mb-4;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.horizontal-line::after {
+    content: "";
+    display: block;
+    width: 100%;
+    border-bottom: 2px solid rgba(71, 85, 105, 0.5);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 auto;
+}
+
+.image-left .project-image {
+    order: 1;
+    margin-right: 1em;
+}
+
+.image-left .project-content {
+    order: 2;
+}
+
+.image-right .project-image {
+    order: 2;
+    margin-left: 1em;
+}
+
+.image-right .project-content {
+    order: 1;
+}
+
+.project-image {
+    @apply drop-shadow-lg mt-4;
+    object-fit: cover;
+    border-radius: 7px;
+    height: 15em;
+    width: auto;
+    box-shadow: 
+        3px 3px 0 rgba(137, 59, 174, 0.6), /* Original shadow */
+        6px 6px 0 rgba(43, 34, 76, 1); /* Russian violet shadow */
+}
+
+.project-content {
+    @apply mt-3;
+    flex: 1;
+}
+
+.project-title {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.project-description {
+    margin-bottom: 1em;
+    width: 43em;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-technologies {
+    margin-bottom: 1em;
+}
+
+.language {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.2em 0.5em;
+    border-radius: 0.3em;
+    font-size: 0.9em;
+    color: #fff;
+    margin-right: 0.5em;
+    display: inline-block;
+}
+
+.project-link {
+    color: #007bff;
+    text-decoration: none;
+}
+</style>
