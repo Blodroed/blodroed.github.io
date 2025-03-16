@@ -2,7 +2,7 @@
 const { title, description, link, imageSrc, icon } = Astro.props;
 ---
 
-<a href={link} class="h-[12em] border-2 border-[rgba(75,30,133,0.5)] rounded-[1.5em] bg-gradient-to-br from-[rgba(75,30,133,1)] to-[rgba(75,30,133,0.01)] text-white p-[1em] flex justify-center items-left flex-col gap-[0.75em] backdrop-blur-[12px] card">
+<a href={link} class="min-h-[12em] border-2 border-[rgba(75,30,133,0.5)] rounded-[1.5em] bg-gradient-to-br from-[rgba(75,30,133,1)] to-[rgba(75,30,133,0.01)] text-white p-[1em] flex justify-center items-left flex-col gap-[0.75em] backdrop-blur-[12px] card">
     {imageSrc && <img src={imageSrc} alt={title} class="card-image" />}
     <div class="card-content">
         {icon && <i class={`fas fa-${icon} card-icon`}></i>}
@@ -31,12 +31,12 @@ const { title, description, link, imageSrc, icon } = Astro.props;
 }
 
 .card-icon {
-    @apply text-2xl mb-2;
+    @apply text-2xl mb-2 mr-1;
     color: #00bcd4;
 }
 
 .card-title {
-    @apply flex-1 text-[1.5em] font-bold text-center text-slate-200;
+    @apply flex-1 text-[1.5em] md:text-[1.2em] font-bold text-center text-slate-200;
 }
 
 .card-description {

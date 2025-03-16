@@ -1,12 +1,31 @@
 ---
 const { project } = Astro.props;
----
 
+const GITHUB_TOKEN = import.meta.env.GITHUB_TOKEN;
+
+const response = await fetch(project.languages_url, {
+    headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`
+    }
+});
+let languages = {};
+if (response.status === 200) {
+    languages = await response.json();
+} else {
+    console.error(`GitHub API request failed with status: ${response.status}`);
+    languages = { 'API Limit Reached': 'Please try again later' };
+}
+---
 
 <a href={project.html_url} target="_blank" class="project-card">
     <div>
         <h2>{project.name}</h2>
         <p>{project.description}</p>
+        <div class="languages">
+            {Object.keys(languages).map(lang => (
+                <span class="language">{lang}</span>
+            ))}
+        </div>
     </div> 
 </a>
 
@@ -29,5 +48,21 @@ const { project } = Astro.props;
 
 .project-card p {
     @apply text-slate-400;
+}
+
+.languages {
+    margin-top: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+}
+
+.language {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.2em 0.5em;
+    border-radius: 0.3em;
+    font-size: 0.9em;
+    color: #fff;
 }
 </style>

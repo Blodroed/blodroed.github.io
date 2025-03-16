@@ -1,7 +1,7 @@
 {
-  "name": "",
+  "name": "blodroed.github.io",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -10,12 +10,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/tailwind": "^5.1.0",
+    "@astrojs/tailwind": "^6.0.0",
     "astro-navbar": "^2.3.3",
     "astro-seo": "^0.8.4",
     "tailwindcss": "^3.4.10"
   },
   "devDependencies": {
-    "astro": "^4.15.9"
+    "astro": "^5.3.0"
   }
 }

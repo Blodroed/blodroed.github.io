@@ -1,4 +1,148 @@
 ---
-const {title, description, link, imageSrc, icon} = Astro.props;
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface ProjectInfoProps {
+    title: string;
+    description: string;
+    link: string;
+    imageSrc?: string;
+    icon?: string;
+    order: number;
+    technologies?: string[];
+}
+
+const { title, description, link, imageSrc, icon, order, technologies } = Astro.props;
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*.{jpeg,jpg,png,gif}');
+
+let image;
+if (imageSrc) {
+    const imageKey = `/src/assets/${imageSrc}`;
+    if (images[imageKey]) {
+        image = (await images[imageKey]()).default;
+    } else {
+        console.error(`"${imageSrc}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
+    }
+}
+
+// Check if the order is even
+const isEven = order % 2 === 0;
 ---
 
+<div class={`project-info ${isEven ? 'image-left' : 'image-right'} horizontal-line my-2`}>
+    {imageSrc && <Image src={image} alt={title} class="project-image" loading="eager"/>}
+    <div class="project-content">
+        {icon && <i class={`fas fa-${icon} project-icon`}></i>}
+        <h2 class="project-title">{title}</h2>
+        <p class="project-description">{description}</p>
+        {technologies && (
+            <div class="project-technologies">
+                {technologies.slice(0, 3).map(tech => (
+                    <span class="language">{tech}</span>
+                ))}
+                <span id={`more-technologies-${order}`} style="display: none;">
+                    {technologies.slice(3).map(tech => (
+                        <span class="language">{tech}</span>
+                    ))}
+                </span>
+                {technologies.length > 3 && (
+                    <button id={`show-more-${order}`} class="show-more">
+                        Show More
+                    </button>
+                )}
+            </div>
+        )}
+        <a href={link} class="project-link">Learn more</a>
+    </div>
+</div>
+
+<script>
+    function toggleShowMore(event) {
+        const button = event.target;
+        const order = button.id.split('-')[2];
+        const moreTechnologies = document.getElementById(`more-technologies-${order}`);
+        if (moreTechnologies.style.display === 'none') {
+            moreTechnologies.style.display = 'inline';
+            button.textContent = 'Show Less';
+        } else {
+            moreTechnologies.style.display = 'none';
+            button.textContent = 'Show More';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const showMoreButtons = document.querySelectorAll('.show-more');
+        showMoreButtons.forEach(button => {
+            button.addEventListener('click', toggleShowMore);
+        });
+    });
+</script>
+
+<style>
+.project-info {
+    @apply mb-4 flex flex-col md:flex-row items-center relative;
+}
+
+.horizontal-line::after {
+    content: "";
+    display: block;
+    width: 100%;
+    border-bottom: 2px solid rgba(71, 85, 105, 0.5);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 auto;
+}
+
+.image-left .project-image {
+    @apply md:order-1 md:mr-16;
+}
+
+.image-left .project-content {
+    @apply md:order-2;
+}
+
+.image-right .project-image {
+    @apply md:order-2 md:ml-16;
+}
+
+.image-right .project-content {
+    @apply md:order-1;
+}
+
+.project-image {
+    @apply drop-shadow-lg mt-4 w-full md:w-auto h-auto md:h-72 object-cover rounded-lg;
+    box-shadow: 
+        3px 3px 0 rgba(137, 59, 174, 0.6), /* Original shadow */
+        6px 6px 0 rgba(43, 34, 76, 1); /* Russian violet shadow */
+}
+
+.project-content {
+    @apply mt-3 flex-1 text-center md:text-left;
+}
+
+.project-title {
+    @apply text-2xl md:text-4xl mb-2 font-bold;
+    color: rgb(152, 66, 192);
+}
+
+.project-description {
+    @apply mb-4 text-sm md:text-base;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-technologies {
+    @apply mb-4;
+}
+
+.language {
+    @apply bg-opacity-10 bg-white py-1 px-2 rounded text-xs md:text-sm text-white mr-2 inline-block;
+}
+
+.project-link {
+    @apply text-blue-500 no-underline;
+}
+</style>

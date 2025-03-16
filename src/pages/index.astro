@@ -1,6 +1,9 @@
 ---
 import MainMenuLayout from "../layouts/MainMenuLayout.astro";
 import InfoCard from "../components/infoCard.astro";
+
+import { Image } from "astro:assets";
+import profilePic from "../assets/profile-pic.png";
 ---
 
 <MainMenuLayout title="Blodroed Portfolio" 
@@ -13,7 +16,7 @@ import InfoCard from "../components/infoCard.astro";
 				<span style="text-shadow: 0px 0px 40px rgba(96, 165, 250, 0.35);" class="text-5xl md:text-6xl lg:text-7xl text-blue-400 font-bold">Blodroed</span>
 				<span class="text-xl text-blue-500 block">> Data Engineering Student</span>
 			</span>
-			<img src="/profile-pic.png" 
+			<Image src={profilePic} 
 				 style="box-shadow: 0 0 40px rgba(96, 180, 250, 0.35);" 
 				 alt="Blodroed's avatar" 
 				 class="order-1 lg:order-2 ml-0 lg:ml-16 xl:ml-36 mb-5 lg:mb-0 w-[15rem] h-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[23rem] lg:h-[23rem] rounded-full object-cover">
@@ -22,7 +25,7 @@ import InfoCard from "../components/infoCard.astro";
 
 	<div id="card-box" class="w-8/12 mx-auto mb-5 grid sm:grid-cols-1 md:grid-cols-3 gap-4">
 		<InfoCard title="About Me" description="Learn more about my background, skills, and interests." link="/about" icon="user" />
-		<InfoCard title="Projects" description="Here you can see all the projects i have worked on and is currently working on" link="/projects" icon="project-diagram" />
+		<InfoCard title="Projects" description="Here you can see all the projects i have worked on and is currently working on." link="/projects" icon="project-diagram" />
 		<InfoCard title="Contact" description="Get in touch with me for collaborations or inquiries." link="/contact" icon="envelope" />
 	</div>
 </MainMenuLayout>
