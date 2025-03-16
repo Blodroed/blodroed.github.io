@@ -29,7 +29,7 @@ if (imageSrc) {
 const isEven = order % 2 === 0;
 ---
 
-<div class={`project-info ${isEven ? 'image-left' : 'image-right'} horizontal-line`}>
+<div class={`project-info ${isEven ? 'image-left' : 'image-right'} horizontal-line my-2`}>
     {imageSrc && <Image src={image} alt={title} class="project-image" loading="eager"/>}
     <div class="project-content">
         {icon && <i class={`fas fa-${icon} project-icon`}></i>}
@@ -40,13 +40,13 @@ const isEven = order % 2 === 0;
                 {technologies.slice(0, 3).map(tech => (
                     <span class="language">{tech}</span>
                 ))}
-                <span id="more-technologies" style="display: none;">
+                <span id={`more-technologies-${order}`} style="display: none;">
                     {technologies.slice(3).map(tech => (
                         <span class="language">{tech}</span>
                     ))}
                 </span>
                 {technologies.length > 3 && (
-                    <button class="show-more" onclick="toggleShowMore()">
+                    <button id={`show-more-${order}`} class="show-more">
                         Show More
                     </button>
                 )}
@@ -56,26 +56,31 @@ const isEven = order % 2 === 0;
     </div>
 </div>
 
-<script client:load>
-function toggleShowMore() {
-    const moreTechnologies = document.getElementById('more-technologies');
-    const showMoreButton = document.querySelector('.show-more');
-    if (moreTechnologies.style.display === 'none') {
-        moreTechnologies.style.display = 'inline';
-        showMoreButton.textContent = 'Show Less';
-    } else {
-        moreTechnologies.style.display = 'none';
-        showMoreButton.textContent = 'Show More';
+<script>
+    function toggleShowMore(event) {
+        const button = event.target;
+        const order = button.id.split('-')[2];
+        const moreTechnologies = document.getElementById(`more-technologies-${order}`);
+        if (moreTechnologies.style.display === 'none') {
+            moreTechnologies.style.display = 'inline';
+            button.textContent = 'Show Less';
+        } else {
+            moreTechnologies.style.display = 'none';
+            button.textContent = 'Show More';
+        }
     }
-}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const showMoreButtons = document.querySelectorAll('.show-more');
+        showMoreButtons.forEach(button => {
+            button.addEventListener('click', toggleShowMore);
+        });
+    });
 </script>
 
 <style>
 .project-info {
-    @apply mb-4;
-    display: flex;
-    align-items: center;
-    position: relative;
+    @apply mb-4 flex flex-col md:flex-row items-center relative;
 }
 
 .horizontal-line::after {
@@ -91,68 +96,53 @@ function toggleShowMore() {
 }
 
 .image-left .project-image {
-    order: 1;
-    margin-right: 1em;
+    @apply md:order-1 md:mr-16;
 }
 
 .image-left .project-content {
-    order: 2;
+    @apply md:order-2;
 }
 
 .image-right .project-image {
-    order: 2;
-    margin-left: 1em;
+    @apply md:order-2 md:ml-16;
 }
 
 .image-right .project-content {
-    order: 1;
+    @apply md:order-1;
 }
 
 .project-image {
-    @apply drop-shadow-lg mt-4;
-    object-fit: cover;
-    border-radius: 7px;
-    height: 15em;
-    width: auto;
+    @apply drop-shadow-lg mt-4 w-full md:w-auto h-auto md:h-72 object-cover rounded-lg;
     box-shadow: 
         3px 3px 0 rgba(137, 59, 174, 0.6), /* Original shadow */
         6px 6px 0 rgba(43, 34, 76, 1); /* Russian violet shadow */
 }
 
 .project-content {
-    @apply mt-3;
-    flex: 1;
+    @apply mt-3 flex-1 text-center md:text-left;
 }
 
 .project-title {
-    font-size: 1.5em;
-    margin-bottom: 0.5em;
+    @apply text-2xl md:text-4xl mb-2 font-bold;
+    color: rgb(152, 66, 192);
 }
 
 .project-description {
-    margin-bottom: 1em;
-    width: 43em;
+    @apply mb-4 text-sm md:text-base;
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .project-technologies {
-    margin-bottom: 1em;
+    @apply mb-4;
 }
 
 .language {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 0.2em 0.5em;
-    border-radius: 0.3em;
-    font-size: 0.9em;
-    color: #fff;
-    margin-right: 0.5em;
-    display: inline-block;
+    @apply bg-opacity-10 bg-white py-1 px-2 rounded text-xs md:text-sm text-white mr-2 inline-block;
 }
 
 .project-link {
-    color: #007bff;
-    text-decoration: none;
+    @apply text-blue-500 no-underline;
 }
 </style>
