@@ -3,11 +3,7 @@ const { project } = Astro.props;
 
 const GITHUB_TOKEN = import.meta.env.GITHUB_TOKEN;
 
-const response = await fetch(project.languages_url, {
-    headers: {
-        'Authorization': `token ${GITHUB_TOKEN}`
-    }
-});
+const response = await fetch(project.languages_url);
 let languages = {};
 if (response.status === 200) {
     languages = await response.json();
