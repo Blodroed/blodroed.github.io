@@ -1,9 +1,7 @@
 ---
 import MainMenuLayout from "../layouts/MainMenuLayout.astro";
 import InfoCard from "../components/infoCard.astro";
-
-import { Image } from "astro:assets";
-import profilePic from "../assets/profile-pic.png";
+import ProfileImage from "../components/ProfileImage.astro";
 ---
 
 <MainMenuLayout title="Blodroed Portfolio" 
@@ -16,10 +14,11 @@ import profilePic from "../assets/profile-pic.png";
 				<span style="text-shadow: 0px 0px 40px rgba(96, 165, 250, 0.35);" class="text-5xl md:text-6xl lg:text-7xl text-blue-400 font-bold">Blodroed</span>
 				<span class="text-xl text-blue-500 block">> Data Engineering Student</span>
 			</span>
-			<Image src={profilePic} 
-				 style="box-shadow: 0 0 40px rgba(96, 180, 250, 0.35);" 
-				 alt="Blodroed's avatar" 
-				 class="order-1 lg:order-2 ml-0 lg:ml-16 xl:ml-36 mb-5 lg:mb-0 w-[15rem] h-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[23rem] lg:h-[23rem] rounded-full object-cover">
+			<ProfileImage 
+				size="responsive"
+				showGlow={true}
+				class="order-1 lg:order-2 ml-0 lg:ml-16 xl:ml-36 mb-5 lg:mb-0"
+			/>
 		</h1>
 	</div>
 
