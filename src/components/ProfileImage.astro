@@ -1,0 +1,33 @@
+---
+import { Image } from "astro:assets";
+import profilePic from "../assets/profile-pic.png";
+
+export interface Props {
+	size?: "small" | "medium" | "large" | "responsive";
+	showGlow?: boolean;
+	class?: string;
+}
+
+const { size = "responsive", showGlow = true, class: className = "" } = Astro.props;
+
+// Define size classes based on the size prop
+const sizeClasses = {
+	small: "w-32 h-32",
+	medium: "w-48 h-48",
+	large: "w-64 h-64",
+	responsive: "w-[15rem] h-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[23rem] lg:h-[23rem]"
+};
+
+// Define glow style
+const glowStyle = showGlow ? "box-shadow: 0 0 40px rgba(96, 180, 250, 0.35);" : "";
+
+// Combine classes
+const combinedClasses = `${sizeClasses[size]} rounded-full object-cover ${className}`;
+---
+
+<Image 
+	src={profilePic} 
+	style={glowStyle}
+	alt="Blodroed's avatar" 
+	class={combinedClasses}
+/>
