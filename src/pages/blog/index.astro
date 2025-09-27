@@ -1,0 +1,63 @@
+---
+import Layout from "../../layouts/MainMenuLayout.astro";
+import fetchApi from "../../lib/strapi";
+import type BlogPost from "../../interfaces/blog";
+import "../../styles/blog.css";
+
+const prefixUrl = import.meta.env.STRAPI_API_URL || "";
+
+const blogPosts = await fetchApi<BlogPost[]>({
+  endpoint: "blog-posts",
+  query: {
+    sort: "Published:desc",
+    "populate[coverImage]": "true",
+    "populate[author][populate][0]": "ProfilePicture",
+    "populate[tags]": "true",
+  },
+  wrappedByKey: "data",
+});
+---
+
+<Layout>
+  <section class="mx-auto max-w-3xl p-4">
+    <h1 class="text-4xl font-bold text-center mb-8">Blog</h1>
+    <div class="flex flex-col gap-6">
+      {
+        blogPosts.length > 0 ? (
+          blogPosts.map((post) => (
+            <a href={`/blog/${post.canonicalURL}`} class="block rounded-lg shadow-lg bg-gray-900 hover:bg-gray-800 transition p-4">
+              <div class="flex flex-col md:flex-row gap-4 items-center">
+                {
+                  post.coverImage && (
+                    <img
+                      src={`${prefixUrl}${post.coverImage.url}`}
+                      alt={post.coverImage.altText ?? post.Title}
+                      class="w-full md:w-32 h-32 object-cover rounded-md"
+                    />
+                  )
+                }
+                <div class="flex-1">
+                  <h2 class="text-2xl font-semibold mb-1">{post.Title}</h2>
+                  <div class="text-gray-400 text-sm mb-2">
+                    {new Date(post.Published).toLocaleDateString()}
+                    {post.author?.Name && <> · {post.author.Name}</>}
+                  </div>
+                  <p class="text-gray-200 mb-2">{post.summary}</p>
+                  <div class="flex gap-2 flex-wrap">
+                    {
+                      post.tags?.map(tag => (
+                        <span class="px-2 py-1 text-xs bg-gray-800 text-blue-600 rounded-full">{tag.name}</span>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))
+        ) : (
+          <p>No blog posts found.</p>
+        )
+      }
+    </div>
+  </section>
+</Layout>
