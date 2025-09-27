@@ -1,0 +1,190 @@
+---
+export const prerender = true;
+import Layout from "../../layouts/MainMenuLayout.astro";
+import fetchApi from "../../lib/strapi";
+import ContentText from "../../components/Blog/Content-Text.astro";
+import ContentImage from "../../components/Blog/Content-Image.astro";
+import type Blog from "../../interfaces/blog";
+import "../../styles/blog.css";
+import { SocialPlatformIconName } from "../../interfaces/blog";
+import { Icon } from "astro-icon/components";
+
+const { slug } = Astro.params;
+
+export async function getStaticPaths() {
+  const blogPosts = await fetchApi<any[]>({
+    endpoint: "blog-posts",
+    query: { fields: "canonicalURL" },
+    wrappedByKey: "data",
+  });
+
+  return blogPosts.map((post) => ({
+    params: { slug: post.canonicalURL },
+  }));
+}
+
+const blogPost = await fetchApi<Blog[]>({
+  endpoint: "blog-posts",
+  query: {
+    "filters[canonicalURL][$eq]": slug,
+    "populate[author][populate][0]": "ProfilePicture",
+    "populate[author][populate][1]": "Links",
+    "populate[coverImage]": "true",
+    "populate[content]": "true",
+    "populate[tags]": "true",
+  },
+  wrappedByKey: "data",
+});
+
+const blog = blogPost[0];
+const prefixUrl = import.meta.env.STRAPI_API_URL || "";
+---
+
+<Layout>
+  <article class="mx-auto max-w-3xl p-4">
+    <!-- Blog Title -->
+    <h1 class="text-4xl font-bold text-center mb-2">{blog.Title}</h1>
+    <!-- Blog Cover Image -->
+    {
+      blog.coverImage && (
+        <img
+          src={`${prefixUrl}${blog.coverImage.url}`}
+          alt={blog.coverImage.altText ?? blog.Title}
+          style="max-width: 100%;"
+          class="mb-2 rounded-md shadow-lg"
+        />
+      )
+    }
+    <!-- Blog Tags -->
+    <div class="mb-2">
+      {
+        blog.tags && blog.tags.length > 0 && (
+          <span class="inline-flex gap-2">
+            {blog.tags.map((tag) => (
+              <span class="inline-block px-3 py-1 text-xs font-medium bg-gray-800 text-blue-600 rounded-full">
+                {tag.name}
+              </span>
+            ))}
+          </span>
+        )
+      }
+    </div>
+    <!-- Blog Meta Information -->
+    <div class="blog-meta flex flex-col md:flex-row items-center mb-4 md:mb-6">
+      <!-- Blog Info (Right, but on mobile: top) -->
+      <div
+        class="w-full md:w-1/2 min-w-0 md:pl-6 mb-4 md:mb-0 order-1 md:order-3"
+      >
+        <div class="flex flex-wrap gap-2 text-base">
+          <span>
+            <strong class="text-gray-200">Published:</strong>
+            {new Date(blog.Published).toLocaleDateString()}
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-2 text-sm">
+            <span class="text-gray-500">
+            <strong>Edited:</strong>
+            {new Date(blog.updatedAt).toLocaleDateString()}
+          </span>
+        </div>
+        <div class="mt-1 text-base break-words text-gray-200 mb-2">
+          {blog.summary}
+        </div>
+      </div>
+      <!-- Vertical Divider (hidden on mobile) -->
+      <div
+        class="hidden md:block border-l-2 border-gray-700 h-full mx-4 md:order-2"
+        style="min-height: 140px;"
+      >
+      </div>
+      <!-- Horizontal Divider (visible on mobile) -->
+      <div class="block md:hidden w-full border-b-2 border-gray-700 order-2 mb-4"></div>
+      <!-- Author Info (Left on desktop, right image on mobile) -->
+      <div
+        class="flex flex-row-reverse items-center mb-4 md:mb-0 md:flex-row w-full md:w-1/2 md:pr-6 order-3 md:order-1 justify-between"
+      >
+        {
+          blog.author?.ProfilePicture && (
+            <img
+              src={`${prefixUrl}${blog.author.ProfilePicture.url}`}
+              alt={blog.author.ProfilePicture.altText ?? blog.author.Name}
+              class="w-24 h-24 rounded-full object-cover drop-shadow-lg md:mr-4"
+            />
+          )
+        }
+        <div class="flex flex-col items-start justify-center">
+          <span class="font-bold">{blog.author?.Name}</span>
+          {
+            blog.author?.Bio && (
+              <span class="text-gray-500 text-sm mb-2">{blog.author.Bio}</span>
+            )
+          }
+          {
+            blog.author?.eMail && (
+              <span class="text-xs text-gray-500 mb-2">
+                <strong>eMail:</strong>{" "}
+                <a href={`mailto:${blog.author.eMail}`} class="underline">
+                  {blog.author.eMail}
+                </a>
+              </span>
+            )
+          }
+          <div class="flex gap-2 mt-1">
+            {
+              blog.author?.Links?.map((link) => (
+                <a
+                  href={link.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={link.platform}
+                >
+                  <Icon
+                    class="text-gray-700 hover:text-blue-600"
+                    name={
+                      SocialPlatformIconName[link.platform] ??
+                      SocialPlatformIconName.Other
+                    }
+                    height="30"
+                    width="30"
+                  />
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <!-- Horizontal Divider (visible on mobile) -->
+      <div class="block md:hidden w-full border-b-2 border-gray-700 order-4 mb-4"></div>
+    </div>
+    <!-- Blog content Section -->
+    <section>
+      <div class="mt-2" id="blog-content">
+        {
+          Array.isArray(blog.content) && blog.content.length > 0 ? (
+            blog.content.map((block) => {
+              if (block.__component === "blog.content-text") {
+                return (
+                  <ContentText
+                    textBlock={block.textBlock}
+                    className="blog-content-block"
+                  />
+                );
+              }
+              if (block.__component === "blog.content-image") {
+                return (
+                  <ContentImage
+                    Images={block.Images}
+                    MetaImage={block.MetaImage}
+                  />
+                );
+              }
+              return null;
+            })
+          ) : (
+            <p>Something went wrong when retrieving the content.</p>
+          )
+        }
+      </div>
+    </section>
+  </article>
+</Layout>

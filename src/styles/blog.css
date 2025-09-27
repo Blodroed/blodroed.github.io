@@ -1,0 +1,99 @@
+.blog-content-block img {
+    max-width: 100%;
+    height: auto;
+}
+.blog-content-block pre {
+    padding: 1em;
+    border-radius: 0.5em;
+    overflow-x: auto;
+}
+.blog-content-block > * {
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
+}
+
+.blog-content-block h1 {
+    @apply text-red-700 text-2xl sm:text-3xl md:text-4xl font-bold;
+}
+.blog-content-block h2 {
+    @apply text-xl sm:text-2xl md:text-3xl font-semibold text-blue-600;
+}
+.blog-content-block h3 {
+    @apply text-lg sm:text-xl md:text-2xl font-semibold text-green-600;
+}
+.blog-content-block h4 {
+    @apply text-base sm:text-lg md:text-xl font-semibold text-purple-600;
+}
+.blog-content-block h5 {
+    @apply text-sm sm:text-base md:text-lg font-semibold text-yellow-600;
+}
+.blog-content-block h6 {
+    @apply text-xs sm:text-sm md:text-base font-semibold text-gray-600;
+}
+.blog-content-block p {
+    @apply text-base sm:text-lg md:text-xl;
+}
+.blog-content-block a {
+    @apply text-blue-500 underline;
+}
+.blog-content-block blockquote {
+    @apply border-l-4 pl-4 py-2 italic my-4;
+    border-color: #6366f1; /* Indigo-500, soft purple-blue */
+    background-color: #1e2336; /* Slightly lighter than main bg */
+    color: #cbd5e1; /* Light gray text */
+}
+.blog-content-block ul, .blog-content-block ol {
+    @apply pl-6;
+}
+.blog-content-block ul {
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+.blog-content-block ol {
+    list-style-type: decimal;
+    list-style-position: inside;
+}
+.blog-content-block ol ol {
+    list-style-type: lower-alpha;
+}
+.blog-content-block li {
+    @apply my-1;
+}
+.blog-content-block hr {
+    @apply border-t-2 border-gray-700 my-6;
+}
+.blog-content-block table {
+    @apply w-full border-collapse my-4;
+    background-color: #16203a; /* Slightly lighter than #10172a for contrast */
+    color: #e2e8f0; /* Light text for readability */
+    border-radius: 0.5em;
+    overflow: hidden;
+}
+.blog-content-block thead {
+    background-color: #1e293b; /* Distinct header background */
+    color: #f1f5f9; /* Even lighter text for header */
+}
+.blog-content-block th, .blog-content-block td {
+    @apply border px-4 py-2;
+    border-color: #283046; /* Dark border for subtle separation */
+}
+.blog-content-block tr {
+    @apply hover:bg-gray-800;
+    transition: background 0.2s;
+}
+.blog-content-block strong {
+    @apply font-bold text-red-400;
+}
+.blog-content-block em {
+    @apply italic text-blue-400;
+}
+.blog-content-block sub {
+    @apply align-sub;
+}
+.blog-content-block sup {
+    @apply align-super;
+}
+.blog-content-block img {
+    @apply rounded-lg items-center block mx-auto my-4;
+}
