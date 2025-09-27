@@ -1,5 +1,5 @@
-<<<<<<< Updated upstream
 /// <reference path="../.astro/types.d.ts" />
-=======
-/// <reference path="../.astro/types.d.ts" />
->>>>>>> Stashed changes
+interface ImportMetaEnv {
+  readonly STRAPI_API_URL: string;
+  readonly STRAPI_API_TOKEN: string;
+}
