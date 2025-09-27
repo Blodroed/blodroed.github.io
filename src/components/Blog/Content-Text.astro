@@ -1,0 +1,30 @@
+---
+import { marked } from 'marked';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-python';
+
+const { textBlock, className = "" } = Astro.props;
+
+// Configure marked to use Prism for code blocks
+marked.use({
+  renderer: {
+    code(token: any) {
+      // Debug logs
+      console.log('Token:', token);
+      let lang = token.lang || '';
+      if (lang === 'js') lang = 'javascript';
+      if (Prism.languages[lang]) {
+        const highlighted = Prism.highlight(token.text, Prism.languages[lang], lang);
+        console.log('Highlighted result:', highlighted);
+        return `<pre class="language-${lang}"><code>${highlighted}</code></pre>`;
+      }
+      return `<pre><code>${token.text}</code></pre>`;
+    }
+  }
+});
+
+const htmlContent = marked.parse(textBlock);
+---
+<div class={className} set:html={htmlContent}></div>

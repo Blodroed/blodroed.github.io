@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+interface ImageType {
+  url: string;
+  mime: string;
+}
+interface Props {
+  Images: ImageType[];
+  MetaImage?: string;
+}
+const photoUrlprefix = `${import.meta.env.STRAPI_API_URL}`;
+const { Images = [], MetaImage = '' } = Astro.props;
+---
+
+<div class="content-image relative flex items-center justify-center overflow-hidden rounded-lg shadow max-h-[33vh] min-h-[200px] sm:min-h-[120px] bg-white" style="height:33vh;">
+  {Images.length > 1 && (
+    <>
+      <button
+        class="carousel-arrow left absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 rounded-full px-2 py-1 text-2xl z-10 shadow hover:bg-white"
+        aria-label="Previous"
+        id="carousel-prev"
+        type="button"
+      >&#8592;</button>
+      <button
+        class="carousel-arrow right absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 rounded-full px-2 py-1 text-2xl z-10 shadow hover:bg-white"
+        aria-label="Next"
+        id="carousel-next"
+        type="button"
+      >&#8594;</button>
+    </>
+  )}
+  <div id="carousel-track" class="w-full h-full flex items-center justify-center">
+    {Images.length > 0 && (
+      Images.map((img, i) => (
+        img.mime.startsWith('image') ? (
+          <img src={`${photoUrlprefix}${img.url}`} alt={MetaImage} class="carousel-item max-h-[33vh] w-auto max-w-full object-contain rounded-lg shadow" style={`display: ${i === 0 ? 'block' : 'none'};`} />
+        ) : (
+          <video src={img.url} controls class="carousel-item max-h-[33vh] w-auto max-w-full object-contain rounded-lg shadow" style={`display: ${i === 0 ? 'block' : 'none'};`} />
+        )
+      ))
+    )}
+  </div>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.carousel-item');
+  let current = 0;
+  function showItem(idx) {
+    items.forEach((el, i) => {
+      (el as HTMLElement).style.display = i === idx ? 'block' : 'none';
+    });
+  }
+  document.getElementById('carousel-prev')?.addEventListener('click', () => {
+    current = (current === 0) ? items.length - 1 : current - 1;
+    showItem(current);
+  });
+  document.getElementById('carousel-next')?.addEventListener('click', () => {
+    current = (current === items.length - 1) ? 0 : current + 1;
+    showItem(current);
+  });
+</script>
