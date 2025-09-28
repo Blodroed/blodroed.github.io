@@ -10,18 +10,6 @@ import { Icon } from "astro-icon/components";
 
 const { slug } = Astro.params;
 
-export async function getStaticPaths() {
-  const blogPosts = await fetchApi<any[]>({
-    endpoint: "blog-posts",
-    query: { fields: "canonicalURL" },
-    wrappedByKey: "data",
-  });
-
-  return blogPosts.map((post) => ({
-    params: { slug: post.canonicalURL },
-  }));
-}
-
 const blogPost = await fetchApi<Blog[]>({
   endpoint: "blog-posts",
   query: {
