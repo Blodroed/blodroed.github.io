@@ -4,7 +4,8 @@ import ProjectCard from "../../components/ProjectCard.astro";
 import ProjectInfo from "../../components/ProjectInfo.astro";
 
 const GITHUB_GRAPHQL_API = "https://api.github.com/graphql";
-const GITHUB_ACCESS_TOKEN = import.meta.env.GITHUB_TOKEN; // Use the token from environment variables
+const GITHUB_ACCESS_TOKEN = import.meta.env.GITHUB_TOKEN;
+const GITHUB_USERNAME = "blodroed";
 
 // GraphQL query to fetch public repositories and their languages
 const query = `
@@ -39,7 +40,7 @@ try {
     body: JSON.stringify({
       query,
       variables: {
-        username: "blodroed", // Replace with your GitHub username
+        username: GITHUB_USERNAME,
       },
     }),
   });
