@@ -1,16 +1,5 @@
 ---
-const { project } = Astro.props;
-
-const GITHUB_TOKEN = import.meta.env.GITHUB_TOKEN;
-
-const response = await fetch(project.languages_url);
-let languages = {};
-if (response.status === 200) {
-    languages = await response.json();
-} else {
-    console.error(`GitHub API request failed with status: ${response.status}`);
-    languages = { 'API Limit Reached': 'Please try again later' };
-}
+const { project } = Astro.props; // Languages are now passed as part of the project prop
 ---
 
 <a href={project.html_url} target="_blank" class="project-card">
@@ -18,7 +7,7 @@ if (response.status === 200) {
         <h2>{project.name}</h2>
         <p>{project.description}</p>
         <div class="languages">
-            {Object.keys(languages).map(lang => (
+            {project.languages.map((lang) => (
                 <span class="language">{lang}</span>
             ))}
         </div>
