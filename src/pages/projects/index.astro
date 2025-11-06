@@ -56,13 +56,23 @@ try {
   }
 
   // Extract repositories and their languages
-  projects = result.data.user.repositories.nodes.map((repo) => ({
-    name: repo.name,
-    description: repo.description,
-    html_url: repo.url,
-    pushedAt: repo.pushedAt,
-    languages: repo.languages.nodes.map((lang) => lang.name),
-  }));
+  if (
+    result.data &&
+    result.data.user &&
+    result.data.user.repositories
+  ) {
+    projects = result.data.user.repositories.nodes.map((repo) => ({
+      name: repo.name,
+      description: repo.description,
+      html_url: repo.url,
+      pushedAt: repo.pushedAt,
+      languages: repo.languages?.nodes?.length
+        ? repo.languages.nodes.map((lang) => lang.name)
+        : {},
+    }));
+  } else {
+    console.error("Unexpected data structure:", result);
+  }
 } catch (error) {
   console.error("Failed to fetch projects:", error);
 }
