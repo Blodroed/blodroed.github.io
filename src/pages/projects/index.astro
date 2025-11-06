@@ -66,9 +66,7 @@ try {
       description: repo.description,
       html_url: repo.url,
       pushedAt: repo.pushedAt,
-      languages: repo.languages?.nodes?.length
-        ? repo.languages.nodes.map((lang) => lang.name)
-        : {},
+      languages: Array.isArray(repo.languages?.nodes) ? repo.languages.nodes.map((lang) => lang.name) : [],
     }));
   } else {
     console.error("Unexpected data structure:", result);
