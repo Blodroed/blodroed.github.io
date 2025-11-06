@@ -28,9 +28,9 @@ const prefixUrl = import.meta.env.STRAPI_API_URL || "";
 ---
 
 <Layout>
-  <article class="mx-auto max-w-3xl p-4">
+  <article class="mx-auto w-full md:w-8/12 p-4">
     <!-- Blog Title -->
-    <h1 class="text-4xl font-bold text-center mb-2">{blog.Title}</h1>
+    <h1 class="text-xl md:text-5xl font-bold text-center mb-4">{blog.Title}</h1>
     <!-- Blog Cover Image -->
     {
       blog.coverImage && (

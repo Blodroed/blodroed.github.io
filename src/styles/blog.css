@@ -13,7 +13,7 @@
 }
 
 .blog-content-block h1 {
-    @apply text-red-700 text-2xl sm:text-3xl md:text-4xl font-bold;
+    @apply text-blue-400 text-2xl sm:text-3xl md:text-4xl font-bold;
 }
 .blog-content-block h2 {
     @apply text-xl sm:text-2xl md:text-3xl font-semibold text-blue-600;
