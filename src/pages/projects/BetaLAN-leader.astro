@@ -1,10 +1,18 @@
 ---
 import MainMenuLayout from "../../layouts/MainMenuLayout.astro";
-import UnderConstruction from "../../components/UnderConstruction.astro";
+import { Image } from 'astro:assets';
+import BetaLANImage from '../../assets/BetaLAN-2024.jpg';
 
-export const prerender = true;
 ---
 
-<MainMenuLayout>
-  <UnderConstruction />
+<MainMenuLayout title="BetaLAN Leader" seoTitle="BetaLAN Leader" seoDesc="Leading and hosting an incredible LAN event at UiA.">
+  <div id="top-content" class="mx-auto px-4">
+    <h1 class="text-3xl md:text-6xl text-center mb-2">BetaLAN Leader</h1>
+    <p class="italic opacity-50 text-center">Leading and hosting the BetaLAN event at UiA.</p>
+  </div>
+
+  <div id="project-description" class="container mx-auto px-4 md:w-7/12 mb-8">
+    <Image src={BetaLANImage} alt="BetaLAN 2024 SciFi theme" class="rounded-lg mx-auto mb-2 max-w-full" width={900}/>
+    <p class="whitespace-normal break-words">As the Leader of BetaLAN I was responsible for organizing a successful LAN event at UiA, bringing together gamers and tech enthusiasts for an unforgettable experience. With over 60 participants and a dedicated crew, we created what we felt like was the LAN experience we had always wanted.</p>
+  </div>
 </MainMenuLayout>
