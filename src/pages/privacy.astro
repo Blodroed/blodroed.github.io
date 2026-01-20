@@ -1,0 +1,33 @@
+---
+import MainMenuLayout from "../layouts/MainMenuLayout.astro";
+---
+
+<MainMenuLayout title="Privacy Policy">
+    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold mb-6">Privacy Policy</h1>
+        
+        <div class="prose prose-invert max-w-none">
+            <p class="mb-4">Last updated: {new Date().toLocaleDateString()}</p>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">Analytics</h2>
+            <p class="mb-4">
+                We use Umami Analytics to collect anonymous usage data for the purpose of understanding website traffic. 
+                Umami does not use cookies, does not track you across other websites, and creates no persistent identifiers. 
+                No personally identifiable information (PII) is collected.
+            </p>
+            <p class="mb-4">
+                The data collected includes:
+            </p>
+            <ul class="list-disc pl-6 mb-6">
+                <li>Page views</li>
+                <li>Referrer sites</li>
+                <li>Device type (e.g., mobile, desktop)</li>
+                <li>Browser type</li>
+                <li>Country</li>
+            </ul>
+            <p>
+                This data is hosted on our self-hosted instance and is not shared with third parties.
+            </p>
+        </div>
+    </div>
+</MainMenuLayout>
