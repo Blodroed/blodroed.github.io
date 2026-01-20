@@ -5,26 +5,83 @@ import 'prismjs/themes/prism-tomorrow.css';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-python';
 
-const { textBlock, className = "" } = Astro.props;
+const { textBlock = '', className = '' } = Astro.props;
 
-// Configure marked to use Prism for code blocks
-marked.use({
-  renderer: {
-    code(token: any) {
-      // Debug logs
-      console.log('Token:', token);
-      let lang = token.lang || '';
-      if (lang === 'js') lang = 'javascript';
-      if (Prism.languages[lang]) {
-        const highlighted = Prism.highlight(token.text, Prism.languages[lang], lang);
-        console.log('Highlighted result:', highlighted);
-        return `<pre class="language-${lang}"><code>${highlighted}</code></pre>`;
-      }
-      return `<pre><code>${token.text}</code></pre>`;
-    }
+let __codeBlockCounter = 0;
+
+const renderer = new marked.Renderer();
+renderer.code = (code: any, infostring?: string) => {
+  const rawLang = (infostring || '').trim().split(/\s+/)[0] || '';
+  let lang = rawLang === 'js' ? 'javascript' : rawLang;
+  const safeLang = lang || 'text';
+
+  function escapeHtmlString(s: any) {
+    const str = String(s ?? '');
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
-});
 
-const htmlContent = marked.parse(textBlock);
+  // `code` can sometimes be an object depending on marked version; ensure we have a string
+  const rawCode = typeof code === 'string' ? code : (code && typeof (code as any).text === 'string' ? (code as any).text : String(code ?? ''));
+
+  const highlighted = Prism.languages[lang]
+    ? Prism.highlight(rawCode, Prism.languages[lang], lang)
+    : escapeHtmlString(rawCode);
+
+  const id = `code-${++__codeBlockCounter}`;
+
+  return `
+    <div class="code-terminal" role="group" aria-label="Code example" style="background:#0b1220;border:1px solid #2b3844;border-radius:8px;margin:1rem 0;overflow:hidden;">
+      <div class="code-header" style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.6rem;background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));color:#9aa6b2;font-size:0.85rem;">
+        <span class="code-lang" style="font-weight:600;text-transform:uppercase;font-size:0.75rem;color:#7f8b95;">${safeLang}</span>
+        <button class="copy-btn" data-target="${id}" aria-label="Copy code" style="background:transparent;border:1px solid rgba(255,255,255,0.03);color:#9aa6b2;padding:0.25rem 0.45rem;border-radius:6px;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.35rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M16 1H4C2.89543 1 2 1.89543 2 3V17H4V3H16V1Z" fill="#9aa6b2"/>
+            <path d="M20 5H8C6.89543 5 6 5.89543 6 7V21C6 22.1046 6.89543 23 8 23H20C21.1046 23 22 22.1046 22 21V7C22 5.89543 21.1046 5 20 5ZM20 21H8V7H20V21Z" fill="#9aa6b2"/>
+          </svg>
+        </button>
+      </div>
+      <pre class="language-${safeLang}" style="margin:0;padding:0.75rem;overflow:auto;background:transparent;color:#cbd5d8;"><code id="${id}" style="font-family: 'Cascadia Mono PL', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;font-size:0.875rem;line-height:1.4;">${highlighted}</code></pre>
+    </div>
+  `;
+};
+
+marked.use({ renderer });
+
+const htmlContent = marked.parse(textBlock || '');
 ---
-<div class={className} set:html={htmlContent}></div>
+<section class={className} set:html={htmlContent}></section>
+
+<style>
+  .code-terminal{ background:#0b1220; border:1px solid #2b3844; border-radius:8px; margin:1rem 0; overflow:hidden; }
+  .code-header{ display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0.6rem; background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); color:#9aa6b2; font-size:0.85rem; }
+  .code-lang{ font-weight:600; text-transform:uppercase; font-size:0.75rem; color:#7f8b95; }
+  .copy-btn{ background:transparent; border:1px solid rgba(255,255,255,0.03); color:#9aa6b2; padding:0.25rem 0.45rem; border-radius:6px; cursor:pointer; font-size:0.9rem; display:inline-flex; align-items:center; gap:0.35rem; }
+  .copy-btn:active{ transform:translateY(1px); }
+  pre{ margin:0; padding:0.75rem; overflow:auto; background:transparent; color:#cbd5d8; }
+  code{ font-family: 'Cascadia Mono PL', ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; font-size:0.875rem; line-height:1.4; }
+  @media (prefers-color-scheme: light){ .code-terminal{ border-color:#e6e6e6 } }
+</style>
+
+<script type="module">
+  const successSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z" fill="#7ee787"/></svg>`;
+  const failSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4 13.59L15.59 16 12 12.41 8.41 16 8 15.59 11.59 12 8 8.41 8.41 8 12 11.59 15.59 8 16 8.41 12.41 12 16 15.59z" fill="#ff7b7b"/></svg>`;
+
+  window.addEventListener('click', async (e) => {
+    const btn = (e.target.closest && e.target.closest('.copy-btn')) || (e.target.matches && e.target.matches('.copy-btn') && e.target);
+    if (!btn) return;
+    const id = btn.getAttribute('data-target');
+    const codeEl = document.getElementById(id);
+    if (!codeEl) return;
+    const text = codeEl.textContent || codeEl.innerText || '';
+    const origHTML = btn.innerHTML;
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.innerHTML = successSVG;
+      btn.setAttribute('aria-label', 'Copied');
+    } catch (err) {
+      btn.innerHTML = failSVG;
+      btn.setAttribute('aria-label', 'Copy failed');
+    }
+    setTimeout(() => { btn.innerHTML = origHTML; btn.setAttribute('aria-label', 'Copy code'); }, 1500);
+  });
+</script>
