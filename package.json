@@ -1,7 +1,7 @@
 {
   "name": "blodroed.github.io",
   "type": "module",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">= 11.0.0"
@@ -14,21 +14,21 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^6.3.7",
-    "@astrojs/node": "^9.4.4",
+    "@astrojs/markdown-remark": "^7.2.1",
+    "@astrojs/node": "^11.0.2",
     "@astrojs/sitemap": "^3.6.0",
-    "@astrojs/tailwind": "^6.0.2",
     "@iconify-json/fa-brands": "^1.2.2",
     "@iconify-json/fa-solid": "^1.2.2",
     "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.3.3",
     "astro-icon": "^1.1.5",
     "astro-navbar": "^2.3.3",
     "astro-seo": "^0.8.4",
     "marked": "^16.3.0",
     "prismjs": "^1.30.0",
-    "tailwindcss": "^3.4.10"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "astro": "^5.16.1"
+    "astro": "^7.1.3"
   }
 }

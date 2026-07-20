@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from '@tailwindcss/vite';
 
 import node from '@astrojs/node';
 
@@ -11,8 +11,12 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.blodroed.com',
-  integrations: [tailwind(), icon(), sitemap()],
+  integrations: [icon(), sitemap()],
   output: 'server',
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
 
   adapter: node({
     mode: 'standalone'
