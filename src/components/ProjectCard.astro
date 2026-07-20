@@ -17,7 +17,7 @@ const { project } = Astro.props;
 <style>
 @reference "../styles/global.css";
 .project-card {
-    @apply block p-4 rounded-lg bg-gradient-to-br from-blue-700 to-fuchsia-700 bg-opacity-50;
+    @apply block p-4 rounded-lg bg-linear-to-br from-blue-700/50 to-fuchsia-700/50;
     @apply drop-shadow-2xl;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
