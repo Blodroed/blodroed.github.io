@@ -2,42 +2,43 @@
 const { project } = Astro.props;
 ---
 
-<a href={project.html_url} target="_blank" class="project-card">
-    <div>
-        <h2>{project.name}</h2>
-        <p>{project.description}</p>
-        <div class="languages">
-            {project.languages.map((lang) => (
-                <span class="language">{lang}</span>
-            ))}
-        </div>
-    </div> 
+<a href={project.html_url} target="_blank" class="min-h-[12em] bg-slate-800/30 rounded-lg p-6 border border-slate-700 flex justify-center items-left flex-col gap-[0.75em] card">
+    <div class="card-content">
+        <h2 class="card-title">{project.name}</h2>
+    </div>
+    <p class="card-description">{project.description}</p>
+    <div class="languages">
+        {project.languages.map((lang) => (
+            <span class="language">{lang}</span>
+        ))}
+    </div>
 </a>
 
 <style>
 @reference "../styles/global.css";
-.project-card {
-    @apply block p-4 rounded-lg bg-linear-to-br from-blue-700/50 to-fuchsia-700/50;
-    @apply drop-shadow-2xl;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+.card {
+    @apply block;
+    transition: 0.3s ease;
 }
 
-.project-card:hover {
-    transform: translateY(-5px);
+.card:hover {
+    @apply border-fuchsia-600 shadow-fuchsia-700/40 shadow-md;
 }
 
-.project-card h2 {
-    margin-top: 0;
-    text-align: center;
+.card-content {
+    @apply flex items-center mb-2;
 }
 
-.project-card p {
-    @apply text-slate-400;
+.card-title {
+    @apply flex-1 text-[1.5em] md:text-[1.2em] font-bold text-center text-blue-400;
+}
+
+.card-description {
+    @apply text-sm text-slate-400;
 }
 
 .languages {
-    margin-top: 1em;
+    margin-top: auto;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5em;
