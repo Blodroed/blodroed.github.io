@@ -30,7 +30,18 @@ const isEven = order % 2 === 0;
 ---
 
 <div class={`project-info ${isEven ? 'image-left' : 'image-right'} horizontal-line my-2`}>
-    {imageSrc && <Image src={image} alt={title} class="project-image" loading="eager"/>}
+    {imageSrc && (
+        <Image
+            src={image}
+            alt={title}
+            class="project-image"
+            width={900}
+            sizes="(min-width: 768px) 45vw, 100vw"
+            format="webp"
+            quality={75}
+            loading="lazy"
+        />
+    )}
     <div class="project-content">
         {icon && <i class={`fas fa-${icon} project-icon`}></i>}
         <h2 class="project-title">{title}</h2>
