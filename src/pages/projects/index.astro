@@ -1,92 +1,15 @@
 ---
 import MainMenuLayout from "../../layouts/MainMenuLayout.astro";
-import ProjectCard from "../../components/ProjectCard.astro";
 import ProjectInfo from "../../components/ProjectInfo.astro";
-
-const GITHUB_GRAPHQL_API = "https://api.github.com/graphql";
-const GITHUB_ACCESS_TOKEN = import.meta.env.GITHUB_TOKEN;
-const GITHUB_USERNAME = "blodroed";
-
-// GraphQL query to fetch public repositories and their languages
-const query = `
-  query ($username: String!) {
-    user(login: $username) {
-      repositories(first: 100, privacy: PUBLIC, orderBy: {field: PUSHED_AT, direction: DESC}) {
-        nodes {
-          name
-          description
-          url
-          pushedAt
-          languages(first: 10) {
-            nodes {
-              name
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-let projects = [];
-
-try {
-  const response = await fetch(GITHUB_GRAPHQL_API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${GITHUB_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({
-      query,
-      variables: {
-        username: GITHUB_USERNAME,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const result = await response.json();
-
-  if (result.errors) {
-    throw new Error(`GraphQL error: ${result.errors.map((e) => e.message).join(", ")}`);
-  }
-
-  // Extract repositories and their languages
-  if (
-    result.data &&
-    result.data.user &&
-    result.data.user.repositories
-  ) {
-    projects = result.data.user.repositories.nodes.map((repo) => ({
-      name: repo.name,
-      description: repo.description,
-      html_url: repo.url,
-      pushedAt: repo.pushedAt,
-      languages: Array.isArray(repo.languages?.nodes) ? repo.languages.nodes.map((lang) => lang.name) : [],
-    }));
-  } else {
-    console.error("Unexpected data structure:", result);
-  }
-} catch (error) {
-  console.error("Failed to fetch projects:", error);
-}
 ---
 
 <MainMenuLayout>
-  <!-- Jump to sections bar -->
-
-  <!-- Main Projects Header -->
   <div class="container mx-auto w-8/12" id="projects-title">
     <h1 class="text-3xl md:text-6xl text-center mb-12">
       My proudest achievements:
     </h1>
   </div>
 
-  <!-- Container for selected projects -->
   <div class="container mx-auto w-10/12 mb-4" id="selected-projects">
     <ProjectInfo
       title="Jamly - Gamejam Platform"
@@ -122,16 +45,85 @@ try {
     />
   </div>
 
-  <!-- Container for the github repo cards -->
   <div class="container flex justify-center items-center sm:mt-12 md:mt-24">
     <div class="w-full max-w-7xl" id="repo-grid">
       <h2 class="ml-5 text-2xl">My contributions:</h2>
-      <div class="projects-grid">
-        {projects.map((project) => <ProjectCard project={project} />)}
+      <div class="projects-grid" id="projects-grid" aria-live="polite">
+        <p class="projects-status">Loading contributions...</p>
       </div>
     </div>
   </div>
 </MainMenuLayout>
+
+<script>
+  interface Project {
+    name: string;
+    description: string | null;
+    html_url: string;
+    languages: string[];
+  }
+
+  const grid = document.getElementById("projects-grid");
+  const outboundEventName = "outbound-link-click";
+
+  function createProjectCard(project: Project) {
+    const card = document.createElement("a");
+    card.href = project.html_url;
+    card.target = "_blank";
+    card.rel = "noopener noreferrer";
+    card.className = "project-card";
+    if (card.host !== window.location.host) {
+      card.setAttribute("data-umami-event", outboundEventName);
+      card.setAttribute("data-umami-event-url", card.href);
+    }
+
+    const title = document.createElement("h3");
+    title.className = "card-title";
+    title.textContent = project.name;
+    card.append(title);
+
+    const description = document.createElement("p");
+    description.className = "card-description";
+    description.textContent = project.description ?? "No description available.";
+    card.append(description);
+
+    const languages = document.createElement("div");
+    languages.className = "languages";
+    project.languages.forEach((language) => {
+      const badge = document.createElement("span");
+      badge.className = "language";
+      badge.textContent = language;
+      languages.append(badge);
+    });
+    card.append(languages);
+
+    return card;
+  }
+
+  async function loadProjects() {
+    if (!grid) return;
+
+    try {
+      const response = await fetch("/api/projects");
+      if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+
+      const projects = (await response.json()) as Project[];
+      grid.replaceChildren(...projects.map(createProjectCard));
+    } catch (error) {
+      console.error("Failed to load projects:", error);
+      const status = document.createElement("p");
+      status.className = "projects-status";
+      status.textContent = "Contributions are temporarily unavailable.";
+      grid.replaceChildren(status);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadProjects, { once: true });
+  } else {
+    loadProjects();
+  }
+</script>
 
 <style>
   .projects-grid {
@@ -140,5 +132,59 @@ try {
     gap: 20px;
     padding: 15px;
     align-content: center;
+  }
+
+  #projects-grid :global(.projects-status) {
+    grid-column: 1 / -1;
+    padding: 1rem;
+    color: rgb(148 163 184);
+    text-align: center;
+  }
+
+  #projects-grid :global(.project-card) {
+    min-height: 12em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75em;
+    padding: 1.5rem;
+    border: 1px solid rgb(51 65 85);
+    border-radius: 0.5rem;
+    background: rgb(30 41 59 / 30%);
+    transition: 0.3s ease;
+  }
+
+  #projects-grid :global(.project-card:hover) {
+    border-color: rgb(192 38 211);
+    box-shadow: 0 4px 6px -1px rgb(126 34 206 / 40%);
+  }
+
+  #projects-grid :global(.card-title) {
+    flex: 1;
+    color: rgb(96 165 250);
+    font-size: 1.2em;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  #projects-grid :global(.card-description) {
+    color: rgb(148 163 184);
+    font-size: 0.875rem;
+  }
+
+  #projects-grid :global(.languages) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5em;
+    margin-top: auto;
+  }
+
+  #projects-grid :global(.language) {
+    padding: 0.2em 0.5em;
+    border-radius: 0.3em;
+    background-color: rgb(255 255 255 / 10%);
+    color: #fff;
+    font-size: 0.9em;
   }
 </style>

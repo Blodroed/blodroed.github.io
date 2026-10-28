@@ -11,6 +11,7 @@
     "dev": "astro dev",
     "start": "astro start",
     "build": "astro build",
+    "test": "node --test --experimental-strip-types \"test/**/*.test.ts\"",
     "preview": "astro preview",
     "astro": "astro"
   },
