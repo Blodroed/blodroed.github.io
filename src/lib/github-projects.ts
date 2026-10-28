@@ -1,6 +1,6 @@
 const GITHUB_GRAPHQL_API = "https://api.github.com/graphql";
 const GITHUB_USERNAME = "blodroed";
-const CACHE_DURATION_MS = 8 * 60 * 60 * 1000;
+export const CACHE_DURATION_MS = 8 * 60 * 60 * 1000;
 
 export interface Project {
   name: string;
@@ -49,69 +49,87 @@ const query = `
   }
 `;
 
-let cachedProjects: Project[] | null = null;
-let cacheExpiresAt = 0;
-let refreshPromise: Promise<Project[]> | null = null;
-
-async function fetchProjectsFromGitHub(): Promise<Project[]> {
-  const response = await fetch(GITHUB_GRAPHQL_API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.GITHUB_TOKEN}`,
-    },
-    body: JSON.stringify({
-      query,
-      variables: { username: GITHUB_USERNAME },
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`GitHub returned HTTP ${response.status}`);
-  }
-
-  const result = (await response.json()) as GitHubResponse;
-  if (result.errors?.length) {
-    throw new Error(`GitHub GraphQL error: ${result.errors.map((error) => error.message).join(", ")}`);
-  }
-
-  const repositories = result.data?.user?.repositories?.nodes;
-  if (!repositories) {
-    throw new Error("GitHub returned an unexpected repository response");
-  }
-
-  return repositories.map((repo) => ({
-    name: repo.name,
-    description: repo.description,
-    html_url: repo.url,
-    pushedAt: repo.pushedAt,
-    languages: repo.languages?.nodes?.map((language) => language.name) ?? [],
-  }));
+interface ProjectsLoaderOptions {
+  fetchImpl?: typeof fetch;
+  now?: () => number;
+  token?: string;
 }
 
-export async function getProjects(): Promise<Project[]> {
-  if (cachedProjects && Date.now() < cacheExpiresAt) {
-    return cachedProjects;
+export function createProjectsLoader({
+  fetchImpl = fetch,
+  now = Date.now,
+  token = import.meta.env?.GITHUB_TOKEN,
+}: ProjectsLoaderOptions = {}) {
+  let cachedProjects: Project[] | null = null;
+  let cacheExpiresAt = 0;
+  let refreshPromise: Promise<Project[]> | null = null;
+
+  async function fetchProjectsFromGitHub(): Promise<Project[]> {
+    const response = await fetchImpl(GITHUB_GRAPHQL_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username: GITHUB_USERNAME },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`GitHub returned HTTP ${response.status}`);
+    }
+
+    const result = (await response.json()) as GitHubResponse;
+    if (result.errors?.length) {
+      throw new Error(`GitHub GraphQL error: ${result.errors.map((error) => error.message).join(", ")}`);
+    }
+
+    const repositories = result.data?.user?.repositories?.nodes;
+    if (!repositories) {
+      throw new Error("GitHub returned an unexpected repository response");
+    }
+
+    return repositories.map((repo) => ({
+      name: repo.name,
+      description: repo.description,
+      html_url: repo.url,
+      pushedAt: repo.pushedAt,
+      languages: repo.languages?.nodes?.map((language) => language.name) ?? [],
+    }));
   }
 
-  if (!refreshPromise) {
-    refreshPromise = fetchProjectsFromGitHub()
-      .then((projects) => {
-        cachedProjects = projects;
-        cacheExpiresAt = Date.now() + CACHE_DURATION_MS;
-        return projects;
-      })
-      .catch((error) => {
-        if (cachedProjects) {
-          console.error("Failed to refresh GitHub projects; serving stale cache:", error);
-          return cachedProjects;
-        }
-        throw error;
-      })
-      .finally(() => {
-        refreshPromise = null;
-      });
-  }
+  return async function getProjects(): Promise<Project[]> {
+    if (cachedProjects && now() < cacheExpiresAt) {
+      return cachedProjects;
+    }
 
-  return refreshPromise;
+    if (!refreshPromise) {
+      refreshPromise = fetchProjectsFromGitHub()
+        .then((projects) => {
+          cachedProjects = projects;
+          cacheExpiresAt = now() + CACHE_DURATION_MS;
+          return projects;
+        })
+        .catch((error) => {
+          if (cachedProjects) {
+            console.error("Failed to refresh GitHub projects; serving stale cache:", error);
+            return cachedProjects;
+          }
+          throw error;
+        })
+        .finally(() => {
+          refreshPromise = null;
+        });
+    }
+
+    return refreshPromise;
+  };
+}
+
+const getDefaultProjects = createProjectsLoader();
+
+export function getProjects(): Promise<Project[]> {
+  return getDefaultProjects();
 }
