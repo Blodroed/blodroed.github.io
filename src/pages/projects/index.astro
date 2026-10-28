@@ -64,6 +64,7 @@ import ProjectInfo from "../../components/ProjectInfo.astro";
   }
 
   const grid = document.getElementById("projects-grid");
+  const outboundEventName = "outbound-link-click";
 
   function createProjectCard(project: Project) {
     const card = document.createElement("a");
@@ -71,6 +72,10 @@ import ProjectInfo from "../../components/ProjectInfo.astro";
     card.target = "_blank";
     card.rel = "noopener noreferrer";
     card.className = "project-card";
+    if (card.host !== window.location.host) {
+      card.setAttribute("data-umami-event", outboundEventName);
+      card.setAttribute("data-umami-event-url", card.href);
+    }
 
     const title = document.createElement("h3");
     title.className = "card-title";
@@ -129,14 +134,14 @@ import ProjectInfo from "../../components/ProjectInfo.astro";
     align-content: center;
   }
 
-  .projects-status {
+  #projects-grid :global(.projects-status) {
     grid-column: 1 / -1;
     padding: 1rem;
     color: rgb(148 163 184);
     text-align: center;
   }
 
-  .project-card {
+  #projects-grid :global(.project-card) {
     min-height: 12em;
     display: flex;
     flex-direction: column;
@@ -149,12 +154,12 @@ import ProjectInfo from "../../components/ProjectInfo.astro";
     transition: 0.3s ease;
   }
 
-  .project-card:hover {
+  #projects-grid :global(.project-card:hover) {
     border-color: rgb(192 38 211);
     box-shadow: 0 4px 6px -1px rgb(126 34 206 / 40%);
   }
 
-  .card-title {
+  #projects-grid :global(.card-title) {
     flex: 1;
     color: rgb(96 165 250);
     font-size: 1.2em;
@@ -162,12 +167,12 @@ import ProjectInfo from "../../components/ProjectInfo.astro";
     text-align: center;
   }
 
-  .card-description {
+  #projects-grid :global(.card-description) {
     color: rgb(148 163 184);
     font-size: 0.875rem;
   }
 
-  .languages {
+  #projects-grid :global(.languages) {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -175,7 +180,7 @@ import ProjectInfo from "../../components/ProjectInfo.astro";
     margin-top: auto;
   }
 
-  .language {
+  #projects-grid :global(.language) {
     padding: 0.2em 0.5em;
     border-radius: 0.3em;
     background-color: rgb(255 255 255 / 10%);
